@@ -10,6 +10,7 @@ pipeline {
         DJANGO_ENV_CREDENTIALS = credentials('django-env-file')
         FRONTEND_PORT = '5173'
         BACKEND_PORT = '8000'
+        DOCKER_HOST = 'tcp://host.docker.internal:2375' // Ensure Docker Desktop is used
     }
     
     // Define pipeline stages
@@ -35,7 +36,7 @@ pipeline {
             steps {
                 // Check if Docker is running
                 sh '''
-                    if ! docker info > /dev/null 2>&1; then
+                    if ! docker -H $DOCKER_HOST info > /dev/null 2>&1; then
                         echo "Docker is not running. Please start Docker Desktop."
                         exit 1
                     fi
@@ -43,7 +44,7 @@ pipeline {
                 echo 'Docker is running'
                 
                 // List current running containers (for reference)
-                sh 'docker ps'
+                sh 'docker -H $DOCKER_HOST ps'
             }
         }
         
@@ -85,8 +86,8 @@ pipeline {
             steps {
                 // Save running container IDs for potential restore if build fails
                 sh '''
-                    FRONTEND_CONTAINER_ID=$(docker ps -q -f name=restaurant-frontend) || true
-                    BACKEND_CONTAINER_ID=$(docker ps -q -f name=restaurant-backend) || true
+                    FRONTEND_CONTAINER_ID=$(docker -H $DOCKER_HOST ps -q -f name=restaurant-frontend) || true
+                    BACKEND_CONTAINER_ID=$(docker -H $DOCKER_HOST ps -q -f name=restaurant-backend) || true
                     echo "FRONTEND_CONTAINER_ID=$FRONTEND_CONTAINER_ID" > container_ids.txt
                     echo "BACKEND_CONTAINER_ID=$BACKEND_CONTAINER_ID" >> container_ids.txt
                 '''
@@ -95,10 +96,10 @@ pipeline {
                 sh 'mkdir -p volume_backups || true'
                 
                 // Stop existing containers but don't remove volumes
-                sh '$DOCKER_COMPOSE down --remove-orphans || true'
+                sh '$DOCKER_COMPOSE -H $DOCKER_HOST down --remove-orphans || true'
                 
                 // Build docker images using docker-compose
-                sh '$DOCKER_COMPOSE build --no-cache'
+                sh '$DOCKER_COMPOSE -H $DOCKER_HOST build --no-cache'
                 
                 echo 'Docker images built successfully'
             }
@@ -107,7 +108,7 @@ pipeline {
         stage('Deploy Services') {
             steps {
                 // Start containers in detached mode
-                sh '$DOCKER_COMPOSE up -d'
+                sh '$DOCKER_COMPOSE -H $DOCKER_HOST up -d'
                 
                 // Wait for services to be fully up
                 sh '''
@@ -115,18 +116,18 @@ pipeline {
                     sleep 10
                     
                     # Check if services are running
-                    if [ -z "$(docker ps -q -f name=restaurant-frontend)" ] || [ -z "$(docker ps -q -f name=restaurant-backend)" ]; then
+                    if [ -z "$(docker -H $DOCKER_HOST ps -q -f name=restaurant-frontend)" ] || [ -z "$(docker -H $DOCKER_HOST ps -q -f name=restaurant-backend)" ]; then
                         echo "Services failed to start properly."
                         # Attempt to restore previous containers if build failed
                         if [ -f container_ids.txt ]; then
                             source container_ids.txt
                             if [ ! -z "$FRONTEND_CONTAINER_ID" ]; then
                                 echo "Attempting to restore previous frontend container..."
-                                docker start $FRONTEND_CONTAINER_ID || true
+                                docker -H $DOCKER_HOST start $FRONTEND_CONTAINER_ID || true
                             fi
                             if [ ! -z "$BACKEND_CONTAINER_ID" ]; then
                                 echo "Attempting to restore previous backend container..."
-                                docker start $BACKEND_CONTAINER_ID || true
+                                docker -H $DOCKER_HOST start $BACKEND_CONTAINER_ID || true
                             fi
                         fi
                         exit 1
@@ -164,7 +165,7 @@ pipeline {
                 // Check container status
                 sh '''
                     echo "Checking containers status:"
-                    docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+                    docker -H $DOCKER_HOST ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
                     
                     # Print access URLs
                     echo "Frontend URL: http://localhost:${FRONTEND_PORT}"
@@ -180,7 +181,7 @@ pipeline {
             echo 'Your restaurant application is running at http://localhost:5173'
             
             // Display container status
-            sh 'docker ps'
+            sh 'docker -H $DOCKER_HOST ps'
         }
         
         failure {
@@ -188,20 +189,20 @@ pipeline {
             
             // Try to restart containers if they exist but aren't running
             sh '''
-                if docker ps -a | grep -q restaurant-frontend; then
-                    docker start restaurant-frontend || true
+                if docker -H $DOCKER_HOST ps -a | grep -q restaurant-frontend; then
+                    docker -H $DOCKER_HOST start restaurant-frontend || true
                 fi
                 
-                if docker ps -a | grep -q restaurant-backend; then
-                    docker start restaurant-backend || true
+                if docker -H $DOCKER_HOST ps -a | grep -q restaurant-backend; then
+                    docker -H $DOCKER_HOST start restaurant-backend || true
                 fi
             '''
             
             // If containers don't exist, try to redeploy from last working state
             sh '''
-                if ! docker ps -a | grep -q restaurant-frontend || ! docker ps -a | grep -q restaurant-backend; then
+                if ! docker -H $DOCKER_HOST ps -a | grep -q restaurant-frontend || ! docker -H $DOCKER_HOST ps -a | grep -q restaurant-backend; then
                     echo "Attempting to redeploy services..."
-                    $DOCKER_COMPOSE up -d || true
+                    $DOCKER_COMPOSE -H $DOCKER_HOST up -d || true
                 fi
             '''
         }
