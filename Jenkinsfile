@@ -120,8 +120,10 @@ pipeline {
          stage('Apply Migrations') {
              steps {
                  dir(BACKEND_DIR) {
-                     // Apply database migrations
+                     // Activate virtual environment and apply database migrations
                      sh '''
+                         . ${VENV_DIR}/bin/activate
+                         pip list  # Verify installed packages
                          python manage.py makemigrations
                          python manage.py migrate
                      '''
