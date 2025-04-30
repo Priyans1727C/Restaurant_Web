@@ -14,6 +14,12 @@ fi
 echo "Collecting static files"
 python manage.py collectstatic --noinput
 
+# Ensure the database file has the correct permissions
+if [ -f /app/db.sqlite3 ]; then
+    echo "Setting permissions for db.sqlite3"
+    chmod 664 /app/db.sqlite3
+fi
+
 # Start the Django development server
 echo "Starting server"
 exec python manage.py runserver 0.0.0.0:8000
