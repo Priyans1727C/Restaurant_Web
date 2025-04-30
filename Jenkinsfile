@@ -10,8 +10,6 @@ pipeline {
         DJANGO_ENV_CREDENTIALS = credentials('django-env-file')
         // Python virtual environment path
         VENV_DIR = '.venv'
-        // Docker container names to monitor
-        CONTAINER_NAMES = 'restaurant_frontend_1 restaurant_backend_1'
     }
     
     // Define pipeline stages
@@ -107,8 +105,11 @@ pipeline {
         
         stage('Build Docker Images') {
             steps {
+                // Remove previous containers and images if they exist
+                sh '$DOCKER_COMPOSE down --volumes --remove-orphans || true'
+                sh 'docker system prune -af --volumes || true'
+                
                 // Build docker images using docker-compose
-                sh '$DOCKER_COMPOSE down'
                 sh '$DOCKER_COMPOSE build'
                 echo 'Docker images built successfully'
             }
@@ -125,41 +126,8 @@ pipeline {
                 // Run integration tests (placeholder - adjust as needed)
                 echo 'Running integration tests...'
                 
-                // Stop containers after tests
-                // sh '$DOCKER_COMPOSE down'
-                echo 'Integration tests completed'
-            }
-        }
-        
-        stage('Container Health Monitoring') {
-            steps {
-                script {
-                    // Check if Docker is running
-                    sh 'docker info || (systemctl start docker && sleep 5)'
-                    
-                    // Check if containers are running, restart if not
-                    sh '''
-                        # Check if containers exist, if not, start them
-                        if ! docker ps -a | grep -q 'restaurant_'; then
-                            echo "Containers not found, starting them..."
-                            $DOCKER_COMPOSE up -d
-                            sleep 10
-                        fi
-                        
-                        # Check container health and restart if needed
-                        for container in $CONTAINER_NAMES; do
-                            if ! docker ps | grep -q $container; then
-                                echo "$container is not running. Restarting..."
-                                docker start $container || $DOCKER_COMPOSE up -d $container
-                            fi
-                        done
-                        
-                        # Verify all containers are now running
-                        docker ps | grep restaurant
-                    '''
-                    
-                    echo 'Container health check complete, all containers are running'
-                }
+                // Keep containers running after tests, don't shut them down
+                echo 'Integration tests completed, containers left running'
             }
         }
         
