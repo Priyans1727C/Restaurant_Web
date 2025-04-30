@@ -6,8 +6,11 @@ until mysqladmin ping -h "$MYSQL_HOST" -P "$MYSQL_PORT" --silent --password="$MY
     sleep 2
 done
 
-# Create static directory if it doesn't exist
+# Create necessary directories
+echo "Creating required directories..."
 mkdir -p /app/static
+mkdir -p /app/templates
+mkdir -p /app/staticfiles
 
 # Make sure migrations are discovered properly
 echo "Making migrations for accounts app first"

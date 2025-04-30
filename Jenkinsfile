@@ -73,10 +73,10 @@ pipeline {
     post {
         always {
             script {
-                echo 'Cleaning up containers...'
-                cleanWs()
-                echo 'Workspace cleaned'
-                // sh 'docker-compose down || true'
+                echo 'Preserving containers for debugging...'
+                // Only clean workspace files but keep containers running
+                // cleanWs()
+                echo 'Jenkins job completed'
             }
         }
 
@@ -86,6 +86,7 @@ pipeline {
 
         failure {
             echo 'Pipeline failed. Please check the logs.'
+            echo 'Containers are preserved for debugging'
         }
     }
 }

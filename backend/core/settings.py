@@ -31,7 +31,7 @@ print("JWT_ACCESS_TOKEN_LIFETIME:", os.getenv("JWT_ACCESS_TOKEN_LIFETIME"))
 # ----------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEMPLATE_DIR = os.path.join(CORE_DIR, "./templates")
+TEMPLATE_DIR = os.path.join(CORE_DIR, "templates")  # Fixed the path
 ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static')
 print(BASE_DIR)
 # ----------------------------------------------
@@ -84,7 +84,12 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR, 'templates'],
+        'DIRS': [
+            TEMPLATE_DIR,
+            os.path.join(BASE_DIR, 'templates'),
+            # Include Django's admin templates
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'venv/lib/python3.11/site-packages/django/contrib/admin/templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
