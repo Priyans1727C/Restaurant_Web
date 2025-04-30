@@ -6,8 +6,19 @@ until mysqladmin ping -h "$MYSQL_HOST" -P "$MYSQL_PORT" --silent --password="$MY
     sleep 2
 done
 
+# Create static directory if it doesn't exist
+mkdir -p /app/static
+
+# Make sure migrations are discovered properly
+echo "Making migrations for accounts app first"
+python manage.py makemigrations accounts
+echo "Making migrations for all other apps"
+python manage.py makemigrations
+
 echo "Applying database migrations"
-python manage.py migrate --noinput
+python manage.py migrate --fake-initial
+python manage.py migrate accounts --fake-initial
+python manage.py migrate
 
 # Check if the superuser already exists, and create it if it doesn't
 if [ "$DJANGO_SUPERUSER_USERNAME" ] && [ "$DJANGO_SUPERUSER_EMAIL" ] && [ "$DJANGO_SUPERUSER_PASSWORD" ]; then
@@ -22,8 +33,9 @@ else
     echo "Superuser credentials are not set in the environment variables. Skipping superuser creation."
 fi
 
-
-
+# Collect static files
+echo "Collecting static files"
+python manage.py collectstatic --noinput
 
 # Start the Django development server
 echo "Starting server"
