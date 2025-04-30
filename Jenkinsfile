@@ -128,8 +128,7 @@ pipeline {
                  // Run integration tests (placeholder - adjust as needed)
                  echo 'Running integration tests...'
  
-                 // Stop containers after tests
-                 // sh '$DOCKER_COMPOSE down'
+                 // Containers will remain running after tests
                  echo 'Integration tests completed'
              }
          }
@@ -157,12 +156,6 @@ pipeline {
          }
  
          always {
-             // Ensure containers are stopped and removed
-             sh '''
-                 $DOCKER_COMPOSE down || true
-                 $DOCKER_COMPOSE rm -f || true
-             '''
- 
              // Clean up virtual environment
              sh 'rm -rf ${BACKEND_DIR}/${VENV_DIR}'
  
