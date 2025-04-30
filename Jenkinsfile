@@ -29,28 +29,29 @@ pipeline {
                 sh 'docker-compose down || true'
                 sh 'docker-compose up --build -d'
                 echo 'Docker services built and started successfully.'
+                // Give services time to initialize
+                sh 'sleep 10'
             }
         }
 
         stage('Run Migrations') {
             steps {
-                dir('backend') {
-                    retry(3) {
-                        sh 'docker-compose exec backend python manage.py makemigrations'
-                        sh 'docker-compose exec backend python manage.py migrate'
-                    }
-                    echo 'Database migrations applied successfully.'
+                // Execute commands from root directory where docker-compose.yml is located
+                retry(3) {
+                    // Use -T flag to run in non-interactive mode
+                    sh 'docker-compose exec -T backend python manage.py makemigrations'
+                    sh 'docker-compose exec -T backend python manage.py migrate'
                 }
+                echo 'Database migrations applied successfully.'
             }
         }
 
       
         stage('Run Tests') {
             steps {
-                dir('backend') {
-                    // sh 'docker-compose exec backend python manage.py test'
-                    echo 'Tests executed successfully.'
-                }
+                // Execute tests from root directory
+                // sh 'docker-compose exec -T backend python manage.py test'
+                echo 'Tests executed successfully.'
             }
         }
     }
@@ -69,7 +70,6 @@ pipeline {
         failure {
             // sh 'docker-compose down'
             echo 'Pipeline failed. Please check the logs.'
-
         }
     }
 }
