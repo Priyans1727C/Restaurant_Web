@@ -116,6 +116,29 @@ pipeline {
                  echo 'Docker images built successfully'
              }
          }
+
+         stage('Apply Migrations') {
+             steps {
+                 dir(BACKEND_DIR) {
+                     // Apply database migrations
+                     sh '''
+                         python manage.py makemigrations
+                         python manage.py migrate
+                     '''
+                     echo 'Database migrations applied successfully'
+                 }
+             }
+         }
+
+         stage('Collect Static Files') {
+             steps {
+                 dir(BACKEND_DIR) {
+                     // Collect static files
+                     sh 'python manage.py collectstatic --noinput'
+                     echo 'Static files collected successfully'
+                 }
+             }
+         }
  
          stage('Integration Test') {
              steps {
