@@ -152,7 +152,7 @@ pipeline {
         
         always {
             // Clean up workspace and containers
-            sh '$DOCKER_COMPOSE down || true'
+            // sh '$DOCKER_COMPOSE down || true'
             
             // Clean up virtual environment
             sh 'rm -rf ${BACKEND_DIR}/${VENV_DIR}'
