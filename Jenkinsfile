@@ -106,6 +106,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 // Build docker images using docker-compose
+                sh '$DOCKER_COMPOSE down'
                 sh '$DOCKER_COMPOSE build'
                 echo 'Docker images built successfully'
             }
