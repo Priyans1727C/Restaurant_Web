@@ -35,8 +35,10 @@ pipeline {
         stage('Run Migrations') {
             steps {
                 dir('backend') {
-                    sh 'docker-compose exec backend python manage.py makemigrations'
-                    sh 'docker-compose exec backend python manage.py migrate'
+                    retry(3) {
+                        sh 'docker-compose exec backend python manage.py makemigrations'
+                        sh 'docker-compose exec backend python manage.py migrate'
+                    }
                     echo 'Database migrations applied successfully.'
                 }
             }
