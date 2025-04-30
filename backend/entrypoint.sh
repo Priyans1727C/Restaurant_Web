@@ -15,12 +15,13 @@ fi
 # Ensure the database file has the correct permissions and ownership
 if [ -f /app/db.sqlite3 ]; then
     echo "Setting permissions and ownership for db.sqlite3"
-    chmod 777 /app/db.sqlite3
-
+    chmod 664 /app/db.sqlite3
+   
 else
     echo "Database file not found. Running migrations to create it."
     python manage.py migrate
-    chmod 777 /app/db.sqlite3
+    chmod 664 /app/db.sqlite3
+    
 fi
 
 # Start the Django development server
