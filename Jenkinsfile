@@ -132,19 +132,19 @@ pipeline {
              }
          }
 
-         stage('Collect Static Files') {
-             steps {
-                 dir(BACKEND_DIR) {
-                     // Activate virtual environment and collect static files
-                     sh '''
-                         . ${VENV_DIR}/bin/activate
-                         pip list  # Verify installed packages
-                         python manage.py collectstatic --noinput
-                     '''
-                     echo 'Static files collected successfully'
-                 }
-             }
-         }
+        //  stage('Collect Static Files') {
+        //      steps {
+        //          dir(BACKEND_DIR) {
+        //              // Activate virtual environment and collect static files
+        //              sh '''
+        //                  . ${VENV_DIR}/bin/activate
+        //                  pip list  # Verify installed packages
+        //                  python manage.py collectstatic --noinput
+        //              '''
+        //              echo 'Static files collected successfully'
+        //          }
+        //      }
+        //  }
  
          stage('Integration Test') {
              steps {
