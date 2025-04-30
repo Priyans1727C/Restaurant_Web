@@ -11,8 +11,6 @@ else
     echo "Superuser credentials are not set in the environment variables. Skipping superuser creation."
 fi
 
-echo "Collecting static files"
-python manage.py collectstatic --noinput
 
 # Ensure the database file has the correct permissions and ownership
 if [ -f /app/db.sqlite3 ]; then
