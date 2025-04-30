@@ -156,6 +156,9 @@ pipeline {
          }
  
          always {
+             // Ensure the SQLite database is preserved
+             sh 'docker cp restaurant-backend:/app/db.sqlite3 ${BACKEND_DIR}/db.sqlite3 || true'
+
              // Clean up virtual environment
              sh 'rm -rf ${BACKEND_DIR}/${VENV_DIR}'
  
