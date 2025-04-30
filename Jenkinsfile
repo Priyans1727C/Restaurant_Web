@@ -57,7 +57,7 @@ pipeline {
         always {
             echo 'Cleaning up workspace...'
             // sh 'docker-compose down'
-            // cleanWs()
+            cleanWs()
         }
 
         success {
