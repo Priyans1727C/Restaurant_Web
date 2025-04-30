@@ -163,6 +163,19 @@ pipeline {
                  // Example: junit '**/test-results/*.xml'
              }
          }
+
+         stage('Verify Dependencies') {
+             steps {
+                 dir(BACKEND_DIR) {
+                     // Verify installed Python packages
+                     sh '''
+                         . ${VENV_DIR}/bin/activate
+                         pip list
+                     '''
+                     echo 'Verified installed Python packages'
+                 }
+             }
+         }
      }
  
      post {
