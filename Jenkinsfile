@@ -69,7 +69,9 @@ pipeline {
         }
 
         failure {
+            // sh 'docker-compose down'
             echo 'Pipeline failed. Please check the logs.'
+
         }
     }
 }
