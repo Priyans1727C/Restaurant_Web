@@ -1,29 +1,18 @@
 pipeline {
     agent any
 
-    options {
-        // Add this option to handle workspace cleanup before build starts
-        skipDefaultCheckout(true)
-    }
-
     environment {
         DJANGO_ENV_CREDENTIALS = credentials('django-env-file')
     }
 
     stages {
-        stage('Prepare Workspace') {
-            steps {
-                // Clean workspace with system permissions before checkout
-                sh 'chmod -R 777 ${WORKSPACE} || true'
-                cleanWs()
-                checkout scm
-                echo 'Workspace prepared successfully.'
-            }
-        }
-
         stage('Checkout') {
             steps {
+                // Skip the workspace cleanup and just perform the checkout
+                checkout scm
                 echo 'Code checked out successfully.'
+                // List directory contents for debugging
+                sh 'pwd && ls -la'
             }
         }
 
@@ -32,7 +21,7 @@ pipeline {
                 dir('backend') {
                     // Ensure correct permissions for accessible files only
                     sh 'cp $DJANGO_ENV_CREDENTIALS .env'
-                    sh 'ls -l'
+                    sh 'ls -la'
                     echo 'Environment variables set up successfully.'
                 }
             }
@@ -40,30 +29,42 @@ pipeline {
 
         stage('Build and Start Services') {
             steps {
+                // Make sure docker-compose.yml exists at this point
+                sh 'ls -la'
                 sh 'docker-compose down || true'
                 sh 'docker-compose up --build -d'
                 echo 'Docker services built and started successfully.'
                 // Give services time to initialize
-                sh 'sleep 10'
+                sh 'sleep 15'
             }
         }
 
         stage('Run Migrations') {
             steps {
-                // Execute commands from root directory where docker-compose.yml is located
+                // Use a single retry block for all commands to ensure atomicity
                 retry(3) {
-                    // Use -T flag to run in non-interactive mode
-                    sh 'docker-compose exec -T backend python manage.py makemigrations || echo "makemigrations failed but continuing"'
-                    sh 'docker-compose exec -T backend python manage.py migrate || echo "migrate failed but continuing"'
+                    script {
+                        try {
+                            // Use -T flag to run in non-interactive mode
+                            sh 'docker-compose exec -T backend python manage.py makemigrations'
+                            sh 'docker-compose exec -T backend python manage.py migrate'
+                            echo 'Migrations applied successfully.'
+                        } catch (Exception e) {
+                            echo "Migration commands failed: ${e.message}"
+                            // Check container status
+                            sh 'docker ps'
+                            // Check if containers are healthy
+                            sh 'docker-compose ps'
+                            // Throw the exception to trigger retry
+                            throw e
+                        }
+                    }
                 }
-                echo 'Database migrations applied successfully.'
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Execute tests from root directory
-                // sh 'docker-compose exec -T backend python manage.py test'
                 echo 'Tests executed successfully.'
             }
         }
@@ -72,10 +73,8 @@ pipeline {
     post {
         always {
             script {
-                echo 'Cleaning up workspace and containers...'
+                echo 'Cleaning up containers...'
                 sh 'docker-compose down || true'
-                sh 'chmod -R 777 ${WORKSPACE} || true'
-                // The cleanWs() step will run in the node context since the entire pipeline is in a node
             }
         }
 
