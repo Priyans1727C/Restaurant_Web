@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaCheckCircle, FaHome, FaUser } from 'react-icons/fa'
+import PropTypes from 'prop-types'
 
 function OrderSuccess({ orderInfo }) {
   return (
@@ -32,7 +33,7 @@ function OrderSuccess({ orderInfo }) {
       </div>
       
       <p className="text-charcoal-light mb-8">
-        We've sent a confirmation email with all the details to your email address.
+        We&apos;ve sent a confirmation email with all the details to your email address.
         You can also check your order status in your profile.
       </p>
       
@@ -48,6 +49,15 @@ function OrderSuccess({ orderInfo }) {
       </div>
     </motion.div>
   )
+}
+
+OrderSuccess.propTypes = {
+  orderInfo: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    estimatedDelivery: PropTypes.string.isRequired,
+    address: PropTypes.string.isRequired,
+    total: PropTypes.number.isRequired
+  }).isRequired
 }
 
 export default OrderSuccess

@@ -56,7 +56,7 @@ function CartPage() {
                     <FaShoppingCart className="mx-auto text-4xl text-gray-300 mb-4" />
                     <h2 className="text-xl font-serif mb-2">Your cart is empty</h2>
                     <p className="text-charcoal-light mb-6">
-                      Looks like you haven't added any items to your cart yet.
+                      Looks like you haven&apos;t added any items to your cart yet.
                     </p>
                     <Link to="/menu" className="btn btn-primary">
                       Browse Menu

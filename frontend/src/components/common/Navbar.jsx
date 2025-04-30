@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaShoppingCart, FaUser, FaBars, FaTimes } from 'react-icons/fa'
+import { FaShoppingCart, FaUser, FaBars, FaTimes, FaSignInAlt } from 'react-icons/fa'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 
@@ -9,7 +9,7 @@ function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { totalItems } = useCart()
-  const { currentUser } = useAuth()
+  const { isAuthenticated } = useAuth()
   const location = useLocation()
 
   useEffect(() => {
@@ -68,7 +68,11 @@ function Navbar() {
               )}
             </Link>
             <Link to="/profile">
-              <FaUser className={`text-xl ${isScrolled ? 'text-charcoal' : 'text-white'}`} />
+              {isAuthenticated ? (
+                <FaUser className={`text-xl ${isScrolled ? 'text-charcoal' : 'text-white'}`} />
+              ) : (
+                <FaSignInAlt className={`text-xl ${isScrolled ? 'text-charcoal' : 'text-white'}`} />
+              )}
             </Link>
           </div>
         </div>

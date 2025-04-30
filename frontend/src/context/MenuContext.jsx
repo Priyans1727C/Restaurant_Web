@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { fetchMenuCategories, fetchAllMenuItems } from '../services/restaurantApi';
+import PropTypes from 'prop-types';
 
 // Create the context
-const MenuContext = createContext();
+export const MenuContext = createContext();
 
 export function MenuProvider({ children }) {
   const [categories, setCategories] = useState([]);
@@ -58,6 +59,10 @@ export function MenuProvider({ children }) {
       {children}
     </MenuContext.Provider>
   );
+}
+
+MenuProvider.propTypes = {
+  children: PropTypes.node.isRequired
 }
 
 // Custom hook to use the menu context

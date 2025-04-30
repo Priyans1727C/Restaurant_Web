@@ -40,7 +40,7 @@ function FeaturedDishes() {
           <h2 className="text-3xl md:text-4xl font-serif mb-4">Our Signature Dishes</h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
           <p className="text-lg text-charcoal-light max-w-2xl mx-auto">
-            Experience our chef's special creations that have captivated the hearts and palates of our guests.
+            Experience our chef&apos;s special creations that have captivated the hearts and palates of our guests.
           </p>
         </div>
         

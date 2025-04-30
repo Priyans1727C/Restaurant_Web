@@ -17,7 +17,7 @@ function OrderHistory() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="font-serif text-2xl mb-6">Order History</h2>
         <div className="text-center py-8">
-          <p className="text-charcoal-light">You haven't placed any orders yet.</p>
+          <p className="text-charcoal-light">You haven&apos;t placed any orders yet.</p>
         </div>
       </div>
     )

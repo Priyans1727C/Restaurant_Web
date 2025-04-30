@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FaCreditCard, FaPaypal, FaApplePay, FaGoogle, FaLock, FaArrowLeft } from 'react-icons/fa'
+import PropTypes from 'prop-types'
 
 function PaymentForm({ paymentInfo, setPaymentInfo, setStep, handlePlaceOrder }) {
   const [errors, setErrors] = useState({})
@@ -217,6 +218,19 @@ function PaymentForm({ paymentInfo, setPaymentInfo, setStep, handlePlaceOrder })
       </div>
     </form>
   )
+}
+
+PaymentForm.propTypes = {
+  paymentInfo: PropTypes.shape({
+    method: PropTypes.string.isRequired,
+    cardNumber: PropTypes.string,
+    cardName: PropTypes.string,
+    expDate: PropTypes.string,
+    cvv: PropTypes.string
+  }).isRequired,
+  setPaymentInfo: PropTypes.func.isRequired,
+  setStep: PropTypes.func.isRequired,
+  handlePlaceOrder: PropTypes.func.isRequired
 }
 
 export default PaymentForm

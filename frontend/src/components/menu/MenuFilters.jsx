@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useMenu } from '../../context/MenuContext'
+import PropTypes from 'prop-types'
 
 function MenuFilters({ activeCategory, setActiveCategory }) {
   const { categories, isLoading } = useMenu();
@@ -73,6 +74,11 @@ function MenuFilters({ activeCategory, setActiveCategory }) {
       </div>
     </div>
   )
+}
+
+MenuFilters.propTypes = {
+  activeCategory: PropTypes.string.isRequired,
+  setActiveCategory: PropTypes.func.isRequired
 }
 
 export default MenuFilters

@@ -57,7 +57,7 @@ function Testimonials() {
                   </div>
                   
                   <p className="text-xl mb-6 italic">
-                    "{testimonials[current].comment}"
+                    &quot;{testimonials[current].comment}&quot;
                   </p>
                   
                   <h4 className="font-serif text-xl">{testimonials[current].name}</h4>

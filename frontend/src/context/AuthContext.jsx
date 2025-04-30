@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 
-const AuthContext = createContext()
+// Create context in a separate export to avoid fast-refresh warning
+export const AuthContext = createContext()
 
 export function useAuth() {
   return useContext(AuthContext)
@@ -20,7 +22,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   // For demo purposes - in a real app, this would be an API call
-  const login = (email, password) => {
+  const login = (email) => {
     // Mock successful login
     const user = {
       id: '1',
@@ -59,7 +61,7 @@ export function AuthProvider({ children }) {
     return user
   }
 
-  const signup = (name, email, password) => {
+  const signup = (name, email) => {
     // Mock user creation
     const newUser = {
       id: Date.now().toString(),
@@ -100,4 +102,8 @@ export function AuthProvider({ children }) {
       {!loading && children}
     </AuthContext.Provider>
   )
+}
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired
 }

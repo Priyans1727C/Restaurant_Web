@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FaCheck } from 'react-icons/fa'
+import PropTypes from 'prop-types'
 
 function DeliveryForm({ deliveryInfo, setDeliveryInfo, setStep }) {
   const [errors, setErrors] = useState({})
@@ -174,6 +175,19 @@ function DeliveryForm({ deliveryInfo, setDeliveryInfo, setStep }) {
       </div>
     </form>
   )
+}
+
+DeliveryForm.propTypes = {
+  deliveryInfo: PropTypes.shape({
+    fullName: PropTypes.string.isRequired,
+    address: PropTypes.string.isRequired,
+    city: PropTypes.string.isRequired,
+    zipCode: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
+    instructions: PropTypes.string
+  }).isRequired,
+  setDeliveryInfo: PropTypes.func.isRequired,
+  setStep: PropTypes.func.isRequired
 }
 
 export default DeliveryForm

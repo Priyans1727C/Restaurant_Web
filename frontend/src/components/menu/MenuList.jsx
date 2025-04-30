@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import MenuItem from './MenuItem'
 import { useMenu } from '../../context/MenuContext'
 import { fetchMenuItemsByCategory } from '../../services/restaurantApi'
+import PropTypes from 'prop-types'
 
 function MenuList({ category, searchQuery }) {
   const { menuItems, isLoading, error } = useMenu();
@@ -83,13 +84,18 @@ function MenuList({ category, searchQuery }) {
           <div className="col-span-full text-center py-12">
             <h3 className="text-xl font-serif mb-2">No items found</h3>
             <p className="text-charcoal-light">
-              Try adjusting your search or filter to find what you're looking for.
+              Try adjusting your search or filter to find what you&apos;re looking for.
             </p>
           </div>
         )}
       </AnimatePresence>
     </div>
   )
+}
+
+MenuList.propTypes = {
+  category: PropTypes.string.isRequired,
+  searchQuery: PropTypes.string
 }
 
 export default MenuList

@@ -39,7 +39,7 @@ function AboutSection() {
             <h2 className="text-3xl md:text-4xl font-serif mt-2 mb-6">A Passion for Exceptional Food & Service</h2>
             
             <p className="text-charcoal-light mb-6">
-              Founded in 2010, Gourmet Table began with a simple mission: create a dining experience that celebrates the art of food while providing unmatched hospitality. Our journey started with Executive Chef Antonio Rossi's vision to blend traditional techniques with innovative approaches.
+              Founded in 2010, Gourmet Table began with a simple mission: create a dining experience that celebrates the art of food while providing unmatched hospitality. Our journey started with Executive Chef Antonio Rossi&apos;s vision to blend traditional techniques with innovative approaches.
             </p>
             
             <p className="text-charcoal-light mb-8">

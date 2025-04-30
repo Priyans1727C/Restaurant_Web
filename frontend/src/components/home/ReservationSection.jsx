@@ -64,7 +64,7 @@ function ReservationSection() {
             >
               <h3 className="text-2xl font-serif text-secondary mb-2">Thank You!</h3>
               <p className="text-charcoal">
-                Your reservation request has been received. We'll confirm your booking shortly via email or phone.
+                Your reservation request has been received. We&apos;ll confirm your booking shortly via email or phone.
               </p>
             </motion.div>
           ) : (

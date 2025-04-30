@@ -70,7 +70,7 @@ function ProfilePage() {
             </form>
             
             <p className="text-center text-charcoal-light">
-              Don't have an account? <a href="#" className="text-primary">Sign up</a>
+              Don&apos;t have an account? <a href="#" className="text-primary">Sign up</a>
             </p>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa'
 import { useCart } from '../../context/CartContext'
+import PropTypes from 'prop-types'
 
 function CartItem({ item }) {
   const { updateQuantity, removeFromCart } = useCart()
@@ -75,6 +76,16 @@ function CartItem({ item }) {
       </div>
     </motion.div>
   )
+}
+
+CartItem.propTypes = {
+  item: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    quantity: PropTypes.number.isRequired,
+    image: PropTypes.string.isRequired
+  }).isRequired
 }
 
 export default CartItem

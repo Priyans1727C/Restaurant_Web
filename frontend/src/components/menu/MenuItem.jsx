@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { FaStar, FaShoppingCart, FaHeart } from 'react-icons/fa'
 import { useCart } from '../../context/CartContext'
 import FoodDetailPopup from './FoodDetailPopup'
+import PropTypes from 'prop-types'
 
 function MenuItem({ item }) {
   const { addToCart } = useCart()
@@ -110,6 +111,21 @@ function MenuItem({ item }) {
       />
     </>
   )
+}
+
+MenuItem.propTypes = {
+  item: PropTypes.shape({
+    item_data: PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      image_url: PropTypes.string.isRequired,
+      ratting: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      is_vegetarian: PropTypes.bool
+    }).isRequired,
+    menu_name: PropTypes.string.isRequired
+  }).isRequired
 }
 
 export default MenuItem

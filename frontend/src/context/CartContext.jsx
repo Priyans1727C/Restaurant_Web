@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 
-const CartContext = createContext()
+// Create context in a separate export to avoid fast-refresh warning
+export const CartContext = createContext()
 
 export function useCart() {
   return useContext(CartContext)
@@ -86,4 +88,8 @@ export function CartProvider({ children }) {
       {children}
     </CartContext.Provider>
   )
+}
+
+CartProvider.propTypes = {
+  children: PropTypes.node.isRequired
 }

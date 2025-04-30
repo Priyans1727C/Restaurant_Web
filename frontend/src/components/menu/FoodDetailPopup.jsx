@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaStar, FaShoppingCart, FaHeart, FaTimes } from 'react-icons/fa'
 import { useCart } from '../../context/CartContext'
+import PropTypes from 'prop-types'
 
 function FoodDetailPopup({ item, isOpen, onClose, isLiked, onLike }) {
   const { addToCart } = useCart()
@@ -95,6 +96,20 @@ function FoodDetailPopup({ item, isOpen, onClose, isLiked, onLike }) {
       </div>
     </AnimatePresence>
   )
+}
+
+FoodDetailPopup.propTypes = {
+  item: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    image: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired
+  }).isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  isLiked: PropTypes.bool.isRequired,
+  onLike: PropTypes.func.isRequired
 }
 
 export default FoodDetailPopup
