@@ -28,7 +28,7 @@ pipeline {
                  sh 'cp $DJANGO_ENV_CREDENTIALS $BACKEND_DIR/.env'
  
                  // Install pyenv if needed
-                 // sh 'command -v python3 -m venv || apt-get update && apt-get install -y python3-venv'
+                 sh 'python3 -m venv ${VENV_DIR}'
  
                  echo 'Environment setup completed'
              }
@@ -51,8 +51,8 @@ pipeline {
                          dir(BACKEND_DIR) {
                              // Create and activate Python virtual environment
                              sh '''
-                                 python3 -m venv ${VENV_DIR}
-                                 . ${VENV_DIR}/bin/activate
+                                 
+                                 source ${VENV_DIR}/bin/activate
                                  pip install --upgrade pip
                                  pip install -r requirements.txt
                              '''
