@@ -118,7 +118,7 @@ pipeline {
         stage('Integration Test') {
             steps {
                 // Start containers in detached mode for testing
-                sh '$DOCKER_COMPOSE up -d'
+                sh '$DOCKER_COMPOSE start'
                 
                 // Wait for services to be fully up
                 sh 'sleep 10'
