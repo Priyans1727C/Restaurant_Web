@@ -16,8 +16,12 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 dir('backend') {
-                    sh 'chmod -R 775 .'
+                    // Ensure correct permissions for accessible files only
+                    sh 'ls -l'
+                    sh 'find . -type f -exec chmod 664 {} + || true'
+                    sh 'find . -type d -exec chmod 775 {} + || true'
                     sh 'cp $DJANGO_ENV_CREDENTIALS .env'
+                    sh 'ls -l'
                     echo 'Environment variables set up successfully.'
                 }
             }
