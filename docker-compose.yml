@@ -5,6 +5,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+
     container_name: restaurant-backend
     restart: always
     volumes:
@@ -18,8 +19,7 @@ services:
       - DJANGO_SETTINGS_MODULE=core.settings
     networks:
       - restaurant-network
-    depends_on:
-      - database
+   
 
   frontend:
     build:

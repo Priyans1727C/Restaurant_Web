@@ -16,7 +16,7 @@ services:
     depends_on:
       - db
 
-  db:
+  database:
     image: mysql:8.0
     restart: always
     environment:
