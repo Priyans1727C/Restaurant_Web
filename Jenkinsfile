@@ -74,7 +74,9 @@ pipeline {
         always {
             script {
                 echo 'Cleaning up containers...'
-                sh 'docker-compose down || true'
+                cleanWs()
+                echo 'Workspace cleaned'
+                // sh 'docker-compose down || true'
             }
         }
 
