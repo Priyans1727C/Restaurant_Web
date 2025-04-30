@@ -47,7 +47,7 @@ function MenuPage() {
       
       <div className="container mx-auto px-4 py-12">
         {/* Search */}
-        <div className="max-w-md mx-auto mb-8">
+        <div className="max-w-md mx-auto my-5 mb-8">
           <div className="relative">
             <input
               type="text"
