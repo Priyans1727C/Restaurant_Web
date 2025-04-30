@@ -76,7 +76,7 @@ pipeline {
         //     }
         // }
         
-        stage('Lint') {
+       
                 stage('Lint Frontend') {
                     steps {
                         dir(FRONTEND_DIR) {
@@ -87,8 +87,7 @@ pipeline {
                     }
                 }
                
-            
-        }
+        
         
         stage('Build Docker Images') {
             steps {
