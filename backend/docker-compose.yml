@@ -13,6 +13,20 @@ services:
       - .env
     environment:
       - DJANGO_SETTINGS_MODULE=core.settings
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: restaurant_db
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
 
 volumes:
   static_volume:
+  db_data:

@@ -12,6 +12,7 @@ inflection==0.5.1
 jsonschema==4.23.0
 jsonschema-specifications==2024.10.1
 Markdown==3.7
+mysqlclient==2.1.1
 packaging==24.2
 pillow==11.1.0
 psycopg2-binary==2.9.10
@@ -25,4 +26,5 @@ typing_extensions==4.12.2
 tzdata==2025.1
 uritemplate==4.1.1
 whitenoise==6.9.0
+
 
