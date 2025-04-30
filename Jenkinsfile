@@ -10,7 +10,7 @@ pipeline {
         DJANGO_ENV_CREDENTIALS = credentials('django-env-file')
         FRONTEND_PORT = '5173'
         BACKEND_PORT = '8000'
-        DOCKER_HOST = 'tcp://host.docker.internal:2375' // Ensure Docker Desktop is used
+        DOCKER_HOST = 'unix:///var/run/docker.sock' // Use default Docker socket on Linux
     }
     
     // Define pipeline stages
@@ -25,6 +25,9 @@ pipeline {
         
         stage('Setup Environment') {
             steps {
+                // Ensure Jenkins user has write permissions to the backend directory
+                sh 'chmod -R u+w $BACKEND_DIR'
+                
                 // Create .env file for backend from Jenkins credentials
                 sh 'cp $DJANGO_ENV_CREDENTIALS $BACKEND_DIR/.env'
                 
@@ -37,7 +40,7 @@ pipeline {
                 // Check if Docker is running
                 sh '''
                     if ! docker -H $DOCKER_HOST info > /dev/null 2>&1; then
-                        echo "Docker is not running. Please start Docker Desktop."
+                        echo "Docker is not running. Please start the Docker daemon."
                         exit 1
                     fi
                 '''
