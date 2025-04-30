@@ -105,8 +105,13 @@ pipeline {
  
          stage('Build Docker Images') {
              steps {
-                 // Build docker images using docker-compose
-                 sh '$DOCKER_COMPOSE down'
+                 // Stop and remove any running containers to avoid conflicts
+                 sh '''
+                     $DOCKER_COMPOSE down || true
+                     $DOCKER_COMPOSE rm -f || true
+                 '''
+                 
+                 // Build docker images
                  sh '$DOCKER_COMPOSE build'
                  echo 'Docker images built successfully'
              }
@@ -152,8 +157,11 @@ pipeline {
          }
  
          always {
-             // Clean up workspace and containers
-             // sh '$DOCKER_COMPOSE down || true'
+             // Ensure containers are stopped and removed
+             sh '''
+                 $DOCKER_COMPOSE down || true
+                 $DOCKER_COMPOSE rm -f || true
+             '''
  
              // Clean up virtual environment
              sh 'rm -rf ${BACKEND_DIR}/${VENV_DIR}'
@@ -162,3 +170,4 @@ pipeline {
              echo 'Workspace cleaned'
          }
      }
+ }
