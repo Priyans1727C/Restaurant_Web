@@ -8,6 +8,8 @@ pipeline {
         BACKEND_DIR = './backend'
         // Credentials to be defined in Jenkins credentials manager
         DJANGO_ENV_CREDENTIALS = credentials('django-env-file')
+        // Python virtual environment path
+        VENV_DIR = '.venv'
     }
     
     // Define pipeline stages
@@ -24,6 +26,10 @@ pipeline {
             steps {
                 // Create .env file for backend from Jenkins credentials
                 sh 'cp $DJANGO_ENV_CREDENTIALS $BACKEND_DIR/.env'
+                
+                // Install pyenv if needed
+                sh 'command -v python3 -m venv || apt-get update && apt-get install -y python3-venv'
+                
                 echo 'Environment setup completed'
             }
         }
@@ -43,9 +49,14 @@ pipeline {
                 stage('Build Backend') {
                     steps {
                         dir(BACKEND_DIR) {
-                            // Install Python dependencies
-                            sh 'pip install -r requirements.txt'
-                            echo 'Backend dependencies installed'
+                            // Create and activate Python virtual environment
+                            sh '''
+                                python3 -m venv ${VENV_DIR}
+                                . ${VENV_DIR}/bin/activate
+                                pip install --upgrade pip
+                                pip install -r requirements.txt
+                            '''
+                            echo 'Backend dependencies installed in virtual environment'
                         }
                     }
                 }
@@ -67,8 +78,11 @@ pipeline {
         //         stage('Test Backend') {
         //             steps {
         //                 dir(BACKEND_DIR) {
-        //                     // Run Django tests
-        //                     sh 'python manage.py test'
+        //                     // Run Django tests within virtual environment
+        //                     sh '''
+        //                         . ${VENV_DIR}/bin/activate
+        //                         python manage.py test
+        //                     '''
         //                     echo 'Backend tests completed'
         //                 }
         //             }
@@ -76,7 +90,6 @@ pipeline {
         //     }
         // }
         
-       
                 stage('Lint Frontend') {
                     steps {
                         dir(FRONTEND_DIR) {
@@ -86,8 +99,9 @@ pipeline {
                         }
                     }
                 }
-               
-        
+                
+              
+      
         
         stage('Build Docker Images') {
             steps {
@@ -139,6 +153,10 @@ pipeline {
         always {
             // Clean up workspace and containers
             sh '$DOCKER_COMPOSE down || true'
+            
+            // Clean up virtual environment
+            sh 'rm -rf ${BACKEND_DIR}/${VENV_DIR}'
+            
             cleanWs()
             echo 'Workspace cleaned'
         }
