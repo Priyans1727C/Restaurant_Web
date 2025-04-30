@@ -126,6 +126,8 @@ pipeline {
                          pip list  # Verify installed packages
                          python manage.py makemigrations
                          python manage.py migrate
+                         ls -l
+                         pwd
                      '''
                      echo 'Database migrations applied successfully'
                  }
