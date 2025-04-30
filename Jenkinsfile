@@ -16,6 +16,7 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 dir('backend') {
+                    sh 'chmod -R 775 .'
                     sh 'cp $DJANGO_ENV_CREDENTIALS .env'
                     echo 'Environment variables set up successfully.'
                 }
