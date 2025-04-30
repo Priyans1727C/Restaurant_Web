@@ -6,15 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Prepare Workspace') {
-            steps {
-                sh 'sudo rm -rf /var/lib/jenkins/workspace/resto2/*'
-                sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/resto2'
-                sh 'sudo chmod -R u+w /var/lib/jenkins/workspace/resto2'
-                echo 'Workspace cleaned and permissions updated successfully.'
-            }
-        }
-
         stage('Checkout') {
             steps {
                 checkout scm
