@@ -20,6 +20,7 @@ pipeline {
                     sh 'ls -l'
                     sh 'find . -type f -exec chmod 664 {} + || true'
                     sh 'find . -type d -exec chmod 775 {} + || true'
+                    sh 'chmod +x entrypoint.sh'  // Ensure entrypoint.sh is executable
                     sh 'cp $DJANGO_ENV_CREDENTIALS .env'
                     sh 'ls -l'
                     echo 'Environment variables set up successfully.'
