@@ -123,7 +123,7 @@ pipeline {
                 echo 'Running integration tests...'
                 
                 // Stop containers after tests
-                sh '$DOCKER_COMPOSE down'
+                // sh '$DOCKER_COMPOSE down'
                 echo 'Integration tests completed'
             }
         }
