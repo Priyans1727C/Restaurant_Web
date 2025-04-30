@@ -135,8 +135,12 @@ pipeline {
          stage('Collect Static Files') {
              steps {
                  dir(BACKEND_DIR) {
-                     // Collect static files
-                     sh 'python manage.py collectstatic --noinput'
+                     // Activate virtual environment and collect static files
+                     sh '''
+                         . ${VENV_DIR}/bin/activate
+                         pip list  # Verify installed packages
+                         python manage.py collectstatic --noinput
+                     '''
                      echo 'Static files collected successfully'
                  }
              }
