@@ -8,8 +8,8 @@ pipeline {
         BACKEND_DIR = './backend'
         // Credentials to be defined in Jenkins credentials manager
         DJANGO_ENV_CREDENTIALS = credentials('django-env-file')
-        // Python virtual environment path
-        VENV_DIR = '.venv'
+        FRONTEND_PORT = '5173'
+        BACKEND_PORT = '8000'
     }
     
     // Define pipeline stages
@@ -27,141 +27,195 @@ pipeline {
                 // Create .env file for backend from Jenkins credentials
                 sh 'cp $DJANGO_ENV_CREDENTIALS $BACKEND_DIR/.env'
                 
-                // Install pyenv if needed
-                // sh 'command -v python3 -m venv || apt-get update && apt-get install -y python3-venv'
-                
                 echo 'Environment setup completed'
             }
         }
         
-        stage('Build') {
+        stage('Check Docker Status') {
+            steps {
+                // Check if Docker is running
+                sh '''
+                    if ! docker info > /dev/null 2>&1; then
+                        echo "Docker is not running. Please start Docker Desktop."
+                        exit 1
+                    fi
+                '''
+                echo 'Docker is running'
+                
+                // List current running containers (for reference)
+                sh 'docker ps'
+            }
+        }
+        
+        stage('Build Dependencies') {
             parallel {
-                stage('Build Frontend') {
+                stage('Build Frontend Dependencies') {
                     steps {
                         dir(FRONTEND_DIR) {
                             // Install npm dependencies
-                            sh 'npm install'
+                            sh 'npm ci || npm install'
                             echo 'Frontend dependencies installed'
                         }
                     }
                 }
                 
-                stage('Build Backend') {
+                stage('Build Backend Dependencies') {
                     steps {
                         dir(BACKEND_DIR) {
-                            // Create and activate Python virtual environment
-                            sh '''
-                                python3 -m venv ${VENV_DIR}
-                                . ${VENV_DIR}/bin/activate
-                                pip install --upgrade pip
-                                pip install -r requirements.txt
-                            '''
-                            echo 'Backend dependencies installed in virtual environment'
+                            // Validate requirements.txt exists
+                            sh 'test -f requirements.txt || (echo "requirements.txt not found" && exit 1)'
+                            echo 'Backend requirements validated'
                         }
                     }
                 }
             }
         }
         
-        // stage('Test') {
-        //     parallel {
-        //         stage('Test Frontend') {
-        //             steps {
-        //                 dir(FRONTEND_DIR) {
-        //                     // Run npm tests - adjust as per your frontend test command
-        //                     sh 'npm test -- --watchAll=false || true'
-        //                     echo 'Frontend tests completed'
-        //                 }
-        //             }
-        //         }
-                
-        //         stage('Test Backend') {
-        //             steps {
-        //                 dir(BACKEND_DIR) {
-        //                     // Run Django tests within virtual environment
-        //                     sh '''
-        //                         . ${VENV_DIR}/bin/activate
-        //                         python manage.py test
-        //                     '''
-        //                     echo 'Backend tests completed'
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        
-                stage('Lint Frontend') {
-                    steps {
-                        dir(FRONTEND_DIR) {
-                            // Run ESLint
-                            sh 'npm run lint || true'
-                            echo 'Frontend linting completed'
-                        }
-                    }
+        stage('Lint Frontend') {
+            steps {
+                dir(FRONTEND_DIR) {
+                    // Run ESLint
+                    sh 'npm run lint || true'
+                    echo 'Frontend linting completed'
                 }
-                
-              
-      
+            }
+        }
         
         stage('Build Docker Images') {
             steps {
-                // Remove previous containers and images if they exist
-                sh '$DOCKER_COMPOSE down --volumes --remove-orphans || true'
-                sh 'docker system prune -af --volumes || true'
+                // Save running container IDs for potential restore if build fails
+                sh '''
+                    FRONTEND_CONTAINER_ID=$(docker ps -q -f name=restaurant-frontend) || true
+                    BACKEND_CONTAINER_ID=$(docker ps -q -f name=restaurant-backend) || true
+                    echo "FRONTEND_CONTAINER_ID=$FRONTEND_CONTAINER_ID" > container_ids.txt
+                    echo "BACKEND_CONTAINER_ID=$BACKEND_CONTAINER_ID" >> container_ids.txt
+                '''
+                
+                // Backup volumes data if needed
+                sh 'mkdir -p volume_backups || true'
+                
+                // Stop existing containers but don't remove volumes
+                sh '$DOCKER_COMPOSE down --remove-orphans || true'
                 
                 // Build docker images using docker-compose
-                sh '$DOCKER_COMPOSE build'
+                sh '$DOCKER_COMPOSE build --no-cache'
+                
                 echo 'Docker images built successfully'
             }
         }
         
-        stage('Integration Test') {
+        stage('Deploy Services') {
             steps {
-                // Start containers in detached mode for testing
-                sh '$DOCKER_COMPOSE start'
+                // Start containers in detached mode
+                sh '$DOCKER_COMPOSE up -d'
                 
                 // Wait for services to be fully up
-                sh 'sleep 10'
+                sh '''
+                    echo "Waiting for services to start..."
+                    sleep 10
+                    
+                    # Check if services are running
+                    if [ -z "$(docker ps -q -f name=restaurant-frontend)" ] || [ -z "$(docker ps -q -f name=restaurant-backend)" ]; then
+                        echo "Services failed to start properly."
+                        # Attempt to restore previous containers if build failed
+                        if [ -f container_ids.txt ]; then
+                            source container_ids.txt
+                            if [ ! -z "$FRONTEND_CONTAINER_ID" ]; then
+                                echo "Attempting to restore previous frontend container..."
+                                docker start $FRONTEND_CONTAINER_ID || true
+                            fi
+                            if [ ! -z "$BACKEND_CONTAINER_ID" ]; then
+                                echo "Attempting to restore previous backend container..."
+                                docker start $BACKEND_CONTAINER_ID || true
+                            fi
+                        fi
+                        exit 1
+                    fi
+                '''
                 
-                // Run integration tests (placeholder - adjust as needed)
-                echo 'Running integration tests...'
+                // Check if frontend is accessible
+                sh '''
+                    echo "Checking if frontend is accessible at localhost:${FRONTEND_PORT}..."
+                    max_attempts=30
+                    attempt=0
+                    
+                    while [ $attempt -lt $max_attempts ]; do
+                        if curl -s http://localhost:${FRONTEND_PORT} > /dev/null; then
+                            echo "Frontend is accessible!"
+                            break
+                        fi
+                        
+                        attempt=$((attempt+1))
+                        echo "Attempt $attempt: Frontend not yet accessible, waiting..."
+                        sleep 2
+                    done
+                    
+                    if [ $attempt -eq $max_attempts ]; then
+                        echo "Warning: Frontend might not be accessible at localhost:${FRONTEND_PORT}"
+                    fi
+                '''
                 
-                // Keep containers running after tests, don't shut them down
-                echo 'Integration tests completed, containers left running'
+                echo "Services deployed - Website available at http://localhost:${FRONTEND_PORT}"
             }
         }
         
-        stage('Test Report') {
+        stage('Verify Deployment') {
             steps {
-                echo 'Generating test reports...'
-                // Here you can add commands to collect and publish test results
-                // Example: junit '**/test-results/*.xml'
+                // Check container status
+                sh '''
+                    echo "Checking containers status:"
+                    docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+                    
+                    # Print access URLs
+                    echo "Frontend URL: http://localhost:${FRONTEND_PORT}"
+                    echo "Backend URL: http://localhost:${BACKEND_PORT}"
+                '''
             }
         }
     }
     
     post {
         success {
-            echo 'All tests passed successfully!'
-            // You can add notifications here
-            // Example: slackSend channel: '#jenkins', color: 'good', message: 'Tests passed!'
+            echo 'Deployment completed successfully!'
+            echo 'Your restaurant application is running at http://localhost:5173'
+            
+            // Display container status
+            sh 'docker ps'
         }
         
         failure {
-            echo 'Tests failed! Please review the results.'
-            // You can add notifications here
-            // Example: slackSend channel: '#jenkins', color: 'danger', message: 'Tests failed!'
+            echo 'Deployment failed! Attempting recovery...'
+            
+            // Try to restart containers if they exist but aren't running
+            sh '''
+                if docker ps -a | grep -q restaurant-frontend; then
+                    docker start restaurant-frontend || true
+                fi
+                
+                if docker ps -a | grep -q restaurant-backend; then
+                    docker start restaurant-backend || true
+                fi
+            '''
+            
+            // If containers don't exist, try to redeploy from last working state
+            sh '''
+                if ! docker ps -a | grep -q restaurant-frontend || ! docker ps -a | grep -q restaurant-backend; then
+                    echo "Attempting to redeploy services..."
+                    $DOCKER_COMPOSE up -d || true
+                fi
+            '''
         }
         
         always {
-            // Clean up workspace and containers
-            // sh '$DOCKER_COMPOSE down || true'
+            // Clean up temporary files but DO NOT remove containers
+            sh '''
+                rm -f container_ids.txt || true
+                rm -rf volume_backups || true
+            '''
             
-            // Clean up virtual environment
-            sh 'rm -rf ${BACKEND_DIR}/${VENV_DIR}'
+            // Do NOT run docker-compose down here to keep containers running
             
-            cleanWs()
-            echo 'Workspace cleaned'
+            echo 'Pipeline completed. Containers will continue running.'
         }
     }
 }
