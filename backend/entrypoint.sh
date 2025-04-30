@@ -12,17 +12,20 @@ else
 fi
 
 
-# Ensure the database file has the correct permissions and ownership
+# Ensure the database file and its parent directory have the correct permissions and ownership
 if [ -f /app/db.sqlite3 ]; then
-    echo "Setting permissions and ownership for db.sqlite3"
+    echo "Setting permissions and ownership for db.sqlite3 and its parent directory"
     chmod 664 /app/db.sqlite3
-    chown jenkins:jenkins /app/db.sqlite3
+    chown www-data:www-data /app/db.sqlite3
+    chmod 775 /app
+    chown www-data:www-data /app
 else
     echo "Database file not found. Running migrations to create it."
     python manage.py migrate
     chmod 664 /app/db.sqlite3
-    chown jenkins:jenkins /app/db.sqlite3
-    ls -l
+    chown www-data:www-data /app/db.sqlite3
+    chmod 775 /app
+    chown www-data:www-data /app
 fi
 
 

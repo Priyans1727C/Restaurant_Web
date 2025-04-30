@@ -25,6 +25,7 @@ dotenv_path = Path(__file__).resolve().parent / '.env'
 load_dotenv(dotenv_path=dotenv_path, override=True)
 
 print("JWT_ACCESS_TOKEN_LIFETIME:", os.getenv("JWT_ACCESS_TOKEN_LIFETIME"))
+
 # ----------------------------------------------
 # Basic Imports and Paths
 # ----------------------------------------------
@@ -32,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(CORE_DIR, "./templates")
 ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static')
-
+print(BASE_DIR)
 # ----------------------------------------------
 # Core Settings
 # ----------------------------------------------
