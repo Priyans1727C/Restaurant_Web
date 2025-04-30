@@ -25,8 +25,11 @@ pipeline {
         
         stage('Setup Environment') {
             steps {
-                // Ensure Jenkins user has write permissions to the backend directory
-                sh 'chmod -R u+w $BACKEND_DIR'
+                // Ensure Jenkins user has write permissions to the backend directory, excluding restricted files
+                sh '''
+                    find $BACKEND_DIR -type f ! -name 'db.sqlite3' -exec chmod u+w {} + || true
+                    find $BACKEND_DIR -type d ! -name 'staticfiles' -exec chmod u+w {} + || true
+                '''
                 
                 // Create .env file for backend from Jenkins credentials
                 sh 'cp $DJANGO_ENV_CREDENTIALS $BACKEND_DIR/.env'
