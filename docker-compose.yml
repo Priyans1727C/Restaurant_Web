@@ -9,7 +9,6 @@ services:
     restart: always
     volumes:
       - ./backend:/app
-      - static_volume:/app/staticfiles
       - ./backend/db.sqlite3:/app/db.sqlite3
     ports:
       - "8000:8000"
