@@ -1,12 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-
-// Create context in a separate export to avoid fast-refresh warning
-export const AuthContext = createContext()
-
-export function useAuth() {
-  return useContext(AuthContext)
-}
+import { AuthContext } from './authUtils'
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null)
@@ -107,3 +101,6 @@ export function AuthProvider({ children }) {
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
+
+// Re-export the useAuth hook to maintain backward compatibility
+export { useAuth } from './authUtils'

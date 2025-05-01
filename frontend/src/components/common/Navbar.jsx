@@ -9,8 +9,9 @@ function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { totalItems } = useCart()
-  const { isAuthenticated } = useAuth()
+  const { currentUser } = useAuth()
   const location = useLocation()
+  const isHomePage = location.pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,16 +32,18 @@ function Navbar() {
   }, [location])
 
   const navbarClasses = `fixed w-full z-50 transition-all duration-300 ${
-    isScrolled || mobileMenuOpen ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
+    isScrolled || mobileMenuOpen || !isHomePage ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
   }`
 
   const linkClasses = `font-medium transition-colors duration-300 hover:text-primary ${
-    isScrolled || mobileMenuOpen ? 'text-charcoal' : 'text-white'
+    isScrolled || mobileMenuOpen || !isHomePage ? 'text-charcoal' : 'text-white'
   }`
 
   const logoClasses = `font-serif text-2xl font-bold transition-colors duration-300 ${
-    isScrolled || mobileMenuOpen ? 'text-primary' : 'text-white'
+    isScrolled || mobileMenuOpen || !isHomePage ? 'text-primary' : 'text-white'
   }`
+
+  const iconClass = isScrolled || mobileMenuOpen || !isHomePage ? 'text-charcoal' : 'text-white'
 
   return (
     <nav className={navbarClasses}>
@@ -53,10 +56,12 @@ function Navbar() {
         <div className="hidden md:flex items-center space-x-8">
           <Link to="/" className={linkClasses}>Home</Link>
           <Link to="/menu" className={linkClasses}>Menu</Link>
+          <Link to="/about" className={linkClasses}>About</Link>
+          <Link to="/contact" className={linkClasses}>Contact</Link>
           
           <div className="flex items-center space-x-4">
             <Link to="/cart" className="relative">
-              <FaShoppingCart className={`text-xl ${isScrolled ? 'text-charcoal' : 'text-white'}`} />
+              <FaShoppingCart className={`text-xl ${iconClass}`} />
               {totalItems > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
@@ -68,10 +73,10 @@ function Navbar() {
               )}
             </Link>
             <Link to="/profile">
-              {isAuthenticated ? (
-                <FaUser className={`text-xl ${isScrolled ? 'text-charcoal' : 'text-white'}`} />
+              {currentUser ? (
+                <FaUser className={`text-xl ${iconClass}`} />
               ) : (
-                <FaSignInAlt className={`text-xl ${isScrolled ? 'text-charcoal' : 'text-white'}`} />
+                <FaSignInAlt className={`text-xl ${iconClass}`} />
               )}
             </Link>
           </div>
@@ -80,7 +85,7 @@ function Navbar() {
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center">
           <Link to="/cart" className="relative mr-4">
-            <FaShoppingCart className={`text-xl ${isScrolled ? 'text-charcoal' : 'text-white'}`} />
+            <FaShoppingCart className={`text-xl ${iconClass}`} />
             {totalItems > 0 && (
               <motion.span
                 initial={{ scale: 0 }}
@@ -99,7 +104,7 @@ function Navbar() {
             {mobileMenuOpen ? (
               <FaTimes className="text-charcoal" />
             ) : (
-              <FaBars className={isScrolled ? 'text-charcoal' : 'text-white'} />
+              <FaBars className={iconClass} />
             )}
           </button>
         </div>
@@ -116,6 +121,8 @@ function Navbar() {
           <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
             <Link to="/" className="text-charcoal py-2 border-b border-gray-100">Home</Link>
             <Link to="/menu" className="text-charcoal py-2 border-b border-gray-100">Menu</Link>
+            <Link to="/about" className="text-charcoal py-2 border-b border-gray-100">About</Link>
+            <Link to="/contact" className="text-charcoal py-2 border-b border-gray-100">Contact</Link>
             <Link to="/profile" className="text-charcoal py-2 border-b border-gray-100">Profile</Link>
           </div>
         </motion.div>

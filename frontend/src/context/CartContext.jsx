@@ -1,12 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-
-// Create context in a separate export to avoid fast-refresh warning
-export const CartContext = createContext()
-
-export function useCart() {
-  return useContext(CartContext)
-}
+import { CartContext } from './cartUtils'
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([])
@@ -93,3 +87,6 @@ export function CartProvider({ children }) {
 CartProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
+
+// Re-export the useCart hook to maintain backward compatibility
+export { useCart } from './cartUtils'
