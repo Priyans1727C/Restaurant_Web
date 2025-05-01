@@ -3,7 +3,7 @@ import { fetchMenuCategories, fetchAllMenuItems } from '../services/restaurantAp
 import PropTypes from 'prop-types'
 import { MenuContext } from './menuUtils'
 
-export function MenuProvider({ children }) {
+function MenuProvider({ children }) {
   const [categories, setCategories] = useState([])
   const [menuItems, setMenuItems] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -47,9 +47,11 @@ export function MenuProvider({ children }) {
   const value = {
     categories,
     menuItems,
+    setMenuItems, // Add the setter function to the context
     menuItemsByCategory,
     isLoading,
     error,
+    setError
   }
 
   return (
@@ -63,5 +65,4 @@ MenuProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
 
-// Re-export the useMenu hook to maintain backward compatibility
-export { useMenu } from './menuUtils'
+export default MenuProvider

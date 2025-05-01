@@ -1,54 +1,66 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import MenuItem from './MenuItem'
-import { useMenu } from '../../context/MenuContext'
-import { fetchMenuItemsByCategory } from '../../services/restaurantApi'
+import { useMenu } from '../../context/menuUtils'
+import { fetchAllMenuItems, fetchMenuItemsByCategory } from '../../services/restaurantApi'
 import PropTypes from 'prop-types'
 import { FaUtensils } from 'react-icons/fa'
 
-function MenuList({ category, searchQuery }) {
-  const { menuItems, isLoading, error } = useMenu();
+function MenuList({ activeCategory, searchQuery }) {
+  const { isLoading: contextLoading, error: contextError, setMenuItems, setError } = useMenu();
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(false);
   
+  // Load or filter menu items when activeCategory or searchQuery changes
   useEffect(() => {
-    async function filterItems() {
+    async function loadMenuItems() {
       setLoading(true);
       try {
         let items = [];
         
-        // If category is 'all', use all menu items, otherwise fetch by category
-        if (category === 'all') {
-          items = [...menuItems];
+        // If activeCategory is 'all', fetch all menu items
+        if (activeCategory === 'all') {
+          items = await fetchAllMenuItems();
         } else {
-          // We can use the existing items for the selected category
-          // or fetch them specifically if needed
-          const categoryItems = await fetchMenuItemsByCategory(category);
-          items = categoryItems;
+          // Otherwise fetch items for the selected category
+          // The API expects a numeric ID, so make sure activeCategory is a number or can be converted to one
+          const categoryId = parseInt(activeCategory, 10);
+          if (!isNaN(categoryId)) {
+            items = await fetchMenuItemsByCategory(categoryId);
+          } else {
+            // If activeCategory is not a valid number, show all items
+            items = await fetchAllMenuItems();
+          }
         }
         
-        // Filter by search query if provided
-        if (searchQuery) {
-          const query = searchQuery.toLowerCase();
+        // Update context with fetched items
+        setMenuItems(items);
+        
+        // Apply search filter if needed
+        if (searchQuery && searchQuery.trim() !== '') {
+          const query = searchQuery.toLowerCase().trim();
           items = items.filter(item => {
             const itemName = item.item_data?.name?.toLowerCase() || '';
             const itemDesc = item.item_data?.description?.toLowerCase() || '';
-            return itemName.includes(query) || itemDesc.includes(query);
+            const categoryName = item.menu_name?.toLowerCase() || '';
+            return itemName.includes(query) || itemDesc.includes(query) || categoryName.includes(query);
           });
         }
         
         setFilteredItems(items);
       } catch (err) {
-        console.error('Error filtering items:', err);
+        console.error('Error loading menu items:', err);
+        setError('Failed to load menu items. Please try again.');
       } finally {
         setLoading(false);
       }
     }
     
-    filterItems();
-  }, [category, searchQuery, menuItems]);
+    loadMenuItems();
+  }, [activeCategory, searchQuery, setMenuItems, setError]);
 
-  if (isLoading || loading) {
+  // Show loading state while fetching data
+  if (contextLoading || loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {[...Array(6)].map((_, index) => (
@@ -72,7 +84,8 @@ function MenuList({ category, searchQuery }) {
     );
   }
   
-  if (error) {
+  // Show error state
+  if (contextError) {
     return (
       <motion.div 
         initial={{ opacity: 0 }} 
@@ -80,11 +93,12 @@ function MenuList({ category, searchQuery }) {
         className="bg-red-50 border border-red-200 text-red-700 p-8 rounded-lg text-center my-8"
       >
         <h3 className="text-xl font-serif mb-2">Error loading menu items</h3>
-        <p>{error}</p>
+        <p>{contextError}</p>
       </motion.div>
     );
   }
   
+  // Show empty state when no items match the filter
   if (filteredItems.length === 0) {
     return (
       <motion.div 
@@ -103,6 +117,7 @@ function MenuList({ category, searchQuery }) {
     );
   }
   
+  // Show menu items
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <AnimatePresence mode="popLayout">
@@ -115,7 +130,7 @@ function MenuList({ category, searchQuery }) {
 }
 
 MenuList.propTypes = {
-  category: PropTypes.string.isRequired,
+  activeCategory: PropTypes.string.isRequired,
   searchQuery: PropTypes.string
 }
 

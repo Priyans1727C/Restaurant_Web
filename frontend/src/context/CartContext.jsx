@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { CartContext } from './cartUtils'
 
-export function CartProvider({ children }) {
+function CartProvider({ children }) {
   const [cart, setCart] = useState([])
   const [totalItems, setTotalItems] = useState(0)
   const [totalPrice, setTotalPrice] = useState(0)
@@ -88,5 +88,4 @@ CartProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
 
-// Re-export the useCart hook to maintain backward compatibility
-export { useCart } from './cartUtils'
+export default CartProvider

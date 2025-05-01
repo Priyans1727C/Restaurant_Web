@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { FaArrowLeft } from 'react-icons/fa'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/authUtils'
 import ProfileInfo from '../components/profile/ProfileInfo'
 import OrderHistory from '../components/profile/OrderHistory'
 

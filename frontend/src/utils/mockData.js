@@ -73,7 +73,8 @@ export const menuItems = [
     description: 'Shrimp, clams, mussels, and calamari in white wine sauce',
     price: 25.99,
     image: 'https://images.pexels.com/photos/1487511/pexels-photo-1487511.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    category: 'seafood'
+    category: 'seafood',
+    popular: true
   },
   {
     id: 9,
@@ -81,7 +82,8 @@ export const menuItems = [
     description: 'Pan-seared sea scallops with pea puree and bacon',
     price: 29.99,
     image: 'https://images.pexels.com/photos/3298633/pexels-photo-3298633.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    category: 'seafood'
+    category: 'seafood',
+    popular: true
   },
   {
     id: 10,
@@ -122,7 +124,8 @@ export const menuItems = [
     description: 'Rich vanilla custard with caramelized sugar crust',
     price: 9.99,
     image: 'https://images.pexels.com/photos/5946939/pexels-photo-5946939.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    category: 'desserts'
+    category: 'desserts',
+    popular: true
   },
   {
     id: 15,

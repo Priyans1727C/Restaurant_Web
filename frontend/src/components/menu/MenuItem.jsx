@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { FaStar, FaShoppingCart, FaHeart, FaLeaf } from 'react-icons/fa'
-import { useCart } from '../../context/CartContext'
+import { FaStar, FaShoppingCart, FaHeart, FaLeaf, FaRupeeSign } from 'react-icons/fa'
+import { useCart } from '../../context/cartUtils'
 import FoodDetailPopup from './FoodDetailPopup'
 import PropTypes from 'prop-types'
 
@@ -13,6 +13,9 @@ function MenuItem({ item }) {
   
   const itemData = item.item_data;
   
+  // Use actual price from the API and convert to integer
+  const priceInINR = parseInt(parseFloat(itemData.price));
+  
   const handleAddToCart = (e) => {
     e.stopPropagation()
     // Format the item to match what the cart expects
@@ -20,7 +23,7 @@ function MenuItem({ item }) {
       id: itemData.id,
       name: itemData.name,
       description: itemData.description,
-      price: parseFloat(itemData.price),
+      price: priceInINR,
       image: itemData.image_url,
       category: item.menu_name
     };
@@ -81,7 +84,10 @@ function MenuItem({ item }) {
         <div className="p-5">
           <div className="flex justify-between items-start mb-2">
             <h3 className="text-xl font-serif font-bold mb-1 line-clamp-1 group-hover:text-primary transition-colors">{itemData.name}</h3>
-            <span className="font-bold text-primary">${parseFloat(itemData.price).toFixed(2)}</span>
+            <span className="font-bold text-primary flex items-center">
+              <FaRupeeSign className="text-sm" />
+              {priceInINR}
+            </span>
           </div>
           
           <p className="text-charcoal-light text-sm mb-3 line-clamp-2">{itemData.description}</p>
@@ -127,7 +133,7 @@ function MenuItem({ item }) {
           id: itemData.id,
           name: itemData.name,
           description: itemData.description, 
-          price: parseFloat(itemData.price),
+          price: priceInINR,
           image: itemData.image_url,
           category: item.menu_name,
           isVegetarian: itemData.is_vegetarian

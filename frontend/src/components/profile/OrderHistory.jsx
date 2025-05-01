@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
-import { useAuth } from '../../context/AuthContext'
+import { FaChevronDown, FaChevronUp, FaRupeeSign } from 'react-icons/fa'
+import { useAuth } from '../../context/authUtils'
 
 function OrderHistory() {
   const { currentUser } = useAuth()
@@ -41,7 +41,10 @@ function OrderHistory() {
               
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <p className="font-medium text-primary">${order.total.toFixed(2)}</p>
+                  <p className="font-medium text-primary flex items-center justify-end">
+                    <FaRupeeSign className="text-xs mr-1" />
+                    {parseInt(order.total)}
+                  </p>
                   <p className={`text-sm ${
                     order.status === 'Delivered' ? 'text-secondary' : 
                     order.status === 'Cancelled' ? 'text-red-500' : 'text-accent-dark'
@@ -72,14 +75,20 @@ function OrderHistory() {
                           <div>
                             <span className="font-medium">{item.quantity}x</span> {item.name}
                           </div>
-                          <span>${(item.price * item.quantity).toFixed(2)}</span>
+                          <span className="flex items-center">
+                            <FaRupeeSign className="text-xs mr-1" />
+                            {parseInt(item.price * item.quantity)}
+                          </span>
                         </div>
                       ))}
                     </div>
                     
                     <div className="border-t border-gray-300 pt-3 flex justify-between font-medium">
                       <span>Total</span>
-                      <span>${order.total.toFixed(2)}</span>
+                      <span className="flex items-center">
+                        <FaRupeeSign className="text-xs mr-1" />
+                        {parseInt(order.total)}
+                      </span>
                     </div>
                   </div>
                 </motion.div>

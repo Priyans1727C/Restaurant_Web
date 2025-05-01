@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaShoppingCart, FaUser, FaBars, FaTimes, FaSignInAlt } from 'react-icons/fa'
-import { useCart } from '../../context/CartContext'
-import { useAuth } from '../../context/AuthContext'
+import { useCart } from '../../context/cartUtils'
+import { useAuth } from '../../context/authUtils'
 
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -32,24 +32,24 @@ function Navbar() {
   }, [location])
 
   const navbarClasses = `fixed w-full z-50 transition-all duration-300 ${
-    isScrolled || mobileMenuOpen || !isHomePage ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
+    isScrolled || mobileMenuOpen || !isHomePage ? 'bg-white shadow-md py-3' : 'bg-white/80 backdrop-blur-md py-5'
   }`
 
   const linkClasses = `font-medium transition-colors duration-300 hover:text-primary ${
-    isScrolled || mobileMenuOpen || !isHomePage ? 'text-charcoal' : 'text-white'
+    isScrolled || mobileMenuOpen || !isHomePage ? 'text-charcoal' : 'text-charcoal'
   }`
 
   const logoClasses = `font-serif text-2xl font-bold transition-colors duration-300 ${
-    isScrolled || mobileMenuOpen || !isHomePage ? 'text-primary' : 'text-white'
+    isScrolled || mobileMenuOpen || !isHomePage ? 'text-primary' : 'text-primary'
   }`
 
-  const iconClass = isScrolled || mobileMenuOpen || !isHomePage ? 'text-charcoal' : 'text-white'
+  const iconClass = isScrolled || mobileMenuOpen || !isHomePage ? 'text-charcoal' : 'text-charcoal'
 
   return (
     <nav className={navbarClasses}>
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className={logoClasses}>
-          Gourmet Table
+          Bitey
         </Link>
         
         {/* Desktop Navigation */}

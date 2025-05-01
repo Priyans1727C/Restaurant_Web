@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaShoppingCart, FaArrowLeft } from 'react-icons/fa'
-import { useCart } from '../context/CartContext'
+import { useCart } from '../context/cartUtils'
 import CartItem from '../components/cart/CartItem'
 import CartSummary from '../components/cart/CartSummary'
 

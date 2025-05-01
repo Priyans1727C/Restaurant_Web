@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
-import { FaStar, FaShoppingCart, FaHeart, FaTimes, FaLeaf, FaMinus, FaPlus } from 'react-icons/fa'
-import { useCart } from '../../context/CartContext'
+import { FaStar, FaShoppingCart, FaHeart, FaTimes, FaLeaf, FaMinus, FaPlus, FaRupeeSign } from 'react-icons/fa'
+import { useCart } from '../../context/cartUtils'
 import PropTypes from 'prop-types'
 
 function FoodDetailPopup({ item, isOpen, onClose, isLiked, onLike }) {
@@ -37,16 +37,16 @@ function FoodDetailPopup({ item, isOpen, onClose, isLiked, onLike }) {
     onClose()
   }
   
-  // Mock options data - in a real app this would come from the backend
+  // Mock options data with prices in INR
   const options = [
-    { id: 1, name: 'Extra sauce', price: 1.50 },
-    { id: 2, name: 'Double portion', price: 5.00 },
-    { id: 3, name: 'Add cheese', price: 2.00 },
-    { id: 4, name: 'Make it spicy', price: 0.50 },
+    { id: 1, name: 'Extra sauce', price: 110 },
+    { id: 2, name: 'Double portion', price: 375 },
+    { id: 3, name: 'Add cheese', price: 150 },
+    { id: 4, name: 'Make it spicy', price: 40 },
   ]
   
   // Mock ingredients - in a real app this would come from the backend
-  const ingredients = ['Premium beef', 'Fresh vegetables', 'House special sauce', 'Organic herbs', 'Artisan bread']
+  const ingredients = ['Premium ingredients', 'Fresh vegetables', 'House special sauce', 'Organic herbs', 'Artisan bread']
   
   // Mock dietary info - in a real app this would come from the backend
   const dietaryInfo = item.isVegetarian 
@@ -109,7 +109,10 @@ function FoodDetailPopup({ item, isOpen, onClose, isLiked, onLike }) {
                   <span className="text-charcoal-light">{item.category}</span>
                 </div>
                 <p className="text-charcoal-light mb-6">{item.description}</p>
-                <p className="text-2xl font-bold text-primary">${item.price.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-primary flex items-center">
+                  <FaRupeeSign className="text-xl mr-1" />
+                  {item.price}
+                </p>
               </div>
               
               {/* Ingredients Section */}
@@ -147,7 +150,10 @@ function FoodDetailPopup({ item, isOpen, onClose, isLiked, onLike }) {
                         }`}></div>
                         <span className="font-medium">{option.name}</span>
                       </div>
-                      <span className="text-primary font-medium">+${option.price.toFixed(2)}</span>
+                      <div className="text-primary font-medium flex items-center">
+                        +<FaRupeeSign className="text-xs mr-1" />
+                        {option.price}
+                      </div>
                     </div>
                   ))}
                 </div>

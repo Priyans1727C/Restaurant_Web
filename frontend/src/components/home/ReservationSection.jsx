@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { FaCalendarAlt } from 'react-icons/fa'
 
 function ReservationSection() {
   const [formData, setFormData] = useState({
@@ -41,17 +42,22 @@ function ReservationSection() {
   }
   
   return (
-    <section id="book-table" className="section-padding bg-white relative overflow-hidden">
+    <section id="book-table" className="section-padding bg-white py-24 relative overflow-hidden">
       {/* Background design elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-accent opacity-10 rounded-bl-full"></div>
-      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-primary opacity-10 rounded-tr-full"></div>
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-accent/20 rounded-bl-full transform rotate-12"></div>
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-primary/15 rounded-tr-full"></div>
+      <div className="absolute top-1/2 left-1/4 w-12 h-12 bg-primary/10 rounded-full"></div>
+      <div className="absolute bottom-1/4 right-1/3 w-16 h-16 bg-accent/10 rounded-full"></div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-serif mb-4">Book Your Table</h2>
+        <div className="text-center mb-16">
+          <span className="inline-block p-2 bg-primary/10 rounded-full mb-4">
+            <FaCalendarAlt className="text-primary text-xl inline-block" />
+          </span>
+          <h2 className="text-3xl md:text-5xl font-serif mb-4">Reserve Your Table</h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
           <p className="text-lg text-charcoal-light max-w-2xl mx-auto">
-            Reserve your perfect dining experience at Gourmet Table and enjoy personalized service in an elegant setting.
+            Book your spot at Bitey and enjoy an unforgettable dining experience with personalized service
           </p>
         </div>
         
@@ -60,15 +66,22 @@ function ReservationSection() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-secondary/10 border border-secondary rounded-lg p-6 text-center"
+              className="bg-secondary/10 border border-secondary rounded-xl p-8 text-center"
             >
               <h3 className="text-2xl font-serif text-secondary mb-2">Thank You!</h3>
-              <p className="text-charcoal">
+              <p className="text-charcoal text-lg">
                 Your reservation request has been received. We&apos;ll confirm your booking shortly via email or phone.
               </p>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8">
+            <motion.form 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              onSubmit={handleSubmit} 
+              className="bg-white rounded-xl shadow-xl p-8 border border-gray-100"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-charcoal font-medium mb-2">Full Name</label>
@@ -79,7 +92,7 @@ function ReservationSection() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     placeholder="John Doe"
                   />
                 </div>
@@ -93,7 +106,7 @@ function ReservationSection() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -107,7 +120,7 @@ function ReservationSection() {
                     value={formData.phone}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     placeholder="(555) 123-4567"
                   />
                 </div>
@@ -121,7 +134,7 @@ function ReservationSection() {
                     value={formData.date}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   />
                 </div>
                 
@@ -134,7 +147,7 @@ function ReservationSection() {
                     value={formData.time}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   />
                 </div>
                 
@@ -146,7 +159,7 @@ function ReservationSection() {
                     value={formData.guests}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                       <option key={num} value={num}>{num} {num === 1 ? 'person' : 'people'}</option>
@@ -164,23 +177,25 @@ function ReservationSection() {
                   value={formData.message}
                   onChange={handleChange}
                   rows="4"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   placeholder="Please let us know if you have any special requests or dietary requirements."
                 ></textarea>
               </div>
               
               <div className="mt-8 text-center">
-                <button 
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="submit" 
-                  className="btn btn-primary min-w-48"
+                  className="btn btn-primary min-w-48 rounded-full px-8 py-3 text-lg font-medium shadow-lg hover:shadow-xl transition-all"
                 >
                   Reserve Now
-                </button>
+                </motion.button>
                 <p className="text-sm text-charcoal-light mt-4">
                   By booking a table, you agree to our reservation policy. We hold reservations for 15 minutes past the booking time.
                 </p>
               </div>
-            </form>
+            </motion.form>
           )}
         </div>
       </div>

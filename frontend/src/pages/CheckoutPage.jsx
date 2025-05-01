@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { FaArrowLeft } from 'react-icons/fa'
-import { useCart } from '../context/CartContext'
+import { useCart } from '../context/cartUtils'
 import DeliveryForm from '../components/checkout/DeliveryForm'
 import PaymentForm from '../components/checkout/PaymentForm'
 import OrderSuccess from '../components/checkout/OrderSuccess'

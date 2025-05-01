@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { AuthContext } from './authUtils'
 
-export function AuthProvider({ children }) {
+function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -102,5 +102,4 @@ AuthProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
 
-// Re-export the useAuth hook to maintain backward compatibility
-export { useAuth } from './authUtils'
+export default AuthProvider

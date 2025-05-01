@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { useMenu } from '../../context/MenuContext'
+import { useMenu } from '../../context/menuUtils'
 import PropTypes from 'prop-types'
 
 function MenuFilters({ activeCategory, setActiveCategory }) {
@@ -47,9 +47,9 @@ function MenuFilters({ activeCategory, setActiveCategory }) {
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => setActiveCategory(category.id)}
+              onClick={() => setActiveCategory(String(category.id))} 
               className={`px-6 py-3 rounded-full transition-all duration-300 font-medium ${
-                activeCategory === category.id
+                activeCategory === String(category.id)
                   ? 'bg-primary text-white shadow-md transform scale-105'
                   : 'bg-white border border-gray-200 text-charcoal hover:bg-gray-50 hover:border-primary'
               }`}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FaUser, FaEdit, FaCheck } from 'react-icons/fa'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/authUtils'
 
 function ProfileInfo() {
   const { currentUser, updateProfile } = useAuth()

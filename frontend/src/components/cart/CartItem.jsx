@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa'
-import { useCart } from '../../context/CartContext'
+import { FaPlus, FaMinus, FaTrash, FaRupeeSign } from 'react-icons/fa'
+import { useCart } from '../../context/cartUtils'
 import PropTypes from 'prop-types'
 
 function CartItem({ item }) {
@@ -36,7 +36,10 @@ function CartItem({ item }) {
         <div className="flex justify-between items-start">
           <div>
             <h3 className="font-medium text-lg">{item.name}</h3>
-            <p className="text-charcoal-light text-sm">${item.price.toFixed(2)}</p>
+            <p className="text-charcoal-light text-sm flex items-center">
+              <FaRupeeSign className="text-xs mr-1" />
+              {parseInt(item.price)}
+            </p>
           </div>
           <button 
             onClick={() => removeFromCart(item.id)}
@@ -72,7 +75,10 @@ function CartItem({ item }) {
       </div>
       
       <div className="ml-6 text-right min-w-20">
-        <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+        <p className="font-medium flex items-center justify-end">
+          <FaRupeeSign className="text-xs mr-1" />
+          {parseInt(item.price * item.quantity)}
+        </p>
       </div>
     </motion.div>
   )

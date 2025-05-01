@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { useCart } from '../../context/CartContext'
+import { useCart } from '../../context/cartUtils'
+import { FaRupeeSign } from 'react-icons/fa'
 
 function CartSummary() {
   const { totalItems, totalPrice } = useCart()
   
   // Calculate tax and total
   const tax = totalPrice * 0.08 // 8% tax
-  const deliveryFee = 5.99
+  const deliveryFee = 50 // Changed from 5.99 to 50 for INR
   const finalTotal = totalPrice + tax + deliveryFee
   
   return (
@@ -21,22 +22,34 @@ function CartSummary() {
       <div className="space-y-3 mb-6">
         <div className="flex justify-between">
           <span className="text-charcoal-light">Subtotal ({totalItems} items)</span>
-          <span>${totalPrice.toFixed(2)}</span>
+          <span className="flex items-center">
+            <FaRupeeSign className="text-xs mr-1" />
+            {parseInt(totalPrice)}
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-charcoal-light">Tax (8%)</span>
-          <span>${tax.toFixed(2)}</span>
+          <span className="flex items-center">
+            <FaRupeeSign className="text-xs mr-1" />
+            {parseInt(tax)}
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-charcoal-light">Delivery Fee</span>
-          <span>${deliveryFee.toFixed(2)}</span>
+          <span className="flex items-center">
+            <FaRupeeSign className="text-xs mr-1" />
+            {deliveryFee}
+          </span>
         </div>
       </div>
       
       <div className="border-t border-gray-200 pt-4 mb-6">
         <div className="flex justify-between font-medium text-lg">
           <span>Total</span>
-          <span className="text-primary">${finalTotal.toFixed(2)}</span>
+          <span className="text-primary flex items-center">
+            <FaRupeeSign className="text-sm mr-1" />
+            {parseInt(finalTotal)}
+          </span>
         </div>
       </div>
       
