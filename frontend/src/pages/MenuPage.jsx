@@ -18,7 +18,7 @@ function MenuPage() {
   return (
     <div className="pt-24 pb-16 bg-ivory">
       {/* Hero Banner */}
-      <div className="relative h-[50vh] overflow-hidden">
+      {/* <div className="relative h-[50vh] overflow-hidden">
         <div className="absolute inset-0">
           <img 
             src="https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
@@ -42,7 +42,7 @@ function MenuPage() {
           </motion.div>
         </div>
       </div>
-      
+       */}
       <div className="container mx-auto px-4 py-16">
         {/* Introduction */}
         <motion.div 
