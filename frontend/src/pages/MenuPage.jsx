@@ -42,7 +42,11 @@ function MenuPage() {
           </motion.div>
         </div>
       </div>
+
        */}
+
+
+       
       <div className="container mx-auto px-4 py-16">
         {/* Introduction */}
         <motion.div 
