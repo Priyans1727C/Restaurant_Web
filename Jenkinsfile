@@ -19,7 +19,6 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 dir('backend') {
-                    // Fix permissions and use a more reliable way to create .env file
                     sh 'mkdir -p .env-temp && chmod 777 .env-temp'
                     sh 'cp $DJANGO_ENV_CREDENTIALS .env-temp/.env'
                     sh 'cat .env-temp/.env > .env || echo "Creating env file manually"'
@@ -33,33 +32,28 @@ pipeline {
 
         stage('Build and Start Services') {
             steps {
-                // Make sure docker-compose.yml exists at this point
+                
                 sh 'ls -la'
                 sh 'docker-compose down || true'
                 sh 'docker-compose up --build -d'
                 echo 'Docker services built and started successfully.'
-                // Give services time to initialize
                 sh 'sleep 15'
             }
         }
 
         stage('Run Migrations') {
             steps {
-                // Use a single retry block for all commands to ensure atomicity
                 retry(3) {
                     script {
                         try {
-                            // Use -T flag to run in non-interactive mode
+                            echo 'Running migrations...'
                             sh 'docker-compose exec -T backend python manage.py makemigrations'
                             sh 'docker-compose exec -T backend python manage.py migrate'
                             echo 'Migrations applied successfully.'
                         } catch (Exception e) {
                             echo "Migration commands failed: ${e.message}"
-                            // Check container status
                             sh 'docker ps'
-                            // Check if containers are healthy
                             sh 'docker-compose ps'
-                            // Throw the exception to trigger retry
                             throw e
                         }
                     }
